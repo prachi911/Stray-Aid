@@ -27,7 +27,7 @@ const App = () => (
             <Route path="/" element={
               <>
                 <Hero 
-                  title="Give Them a Second Chance" 
+                  title="Be Their Voice. Save a Life." 
                   subtitle="Connect injured stray animals with local NGOs and rescue organizations. Together, we can make a difference."
                 />
                 <Index />

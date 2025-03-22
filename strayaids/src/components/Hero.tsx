@@ -13,10 +13,12 @@ const Hero: React.FC<HeroProps> = ({ title, subtitle }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrollY(window.scrollY);
+      requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -24,39 +26,43 @@ const Hero: React.FC<HeroProps> = ({ title, subtitle }) => {
 
   useEffect(() => {
     if (imageRef.current) {
-      // Parallax effect
-      const translateY = scrollY * 0.5; // Adjust the multiplier for stronger/weaker effect
-      imageRef.current.style.transform = `translateY(${translateY}px)`;
+      // Smoother parallax effect with transform3d for hardware acceleration
+      const translateY = Math.min(scrollY * 0.3, window.innerHeight * 0.3); // Limit the parallax movement
+      imageRef.current.style.transform = `translate3d(0, ${translateY}px, 0)`;
     }
   }, [scrollY]);
 
   const scrollToNext = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
+    const nextSection = document.getElementById('how-it-works');
+    if (nextSection) {
+      nextSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   return (
     <div 
       ref={heroRef}
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-screen w-full overflow-hidden snap-start"
     >
       {/* Parallax Background Image */}
       <div 
         ref={imageRef}
-        className="absolute inset-0 w-full h-[120%] top-[-10%] parallax-bg"
+        className="absolute inset-0 w-full h-[120%] top-[-10%] parallax-bg will-change-transform"
         style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=2969&auto=format&fit=crop')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'brightness(0.4)',
+          transform: 'translate3d(0, 0, 0)', // Initial hardware acceleration
         }}
       />
 
       {/* Content */}
       <div className="relative h-full container mx-auto px-6 flex flex-col justify-center items-center text-center z-10">
-        <div className="glass-dark max-w-4xl px-4 md:px-10 pt-12 pb-14 rounded-3xl">
+        <div className="glass-dark max-w-4xl px-4 md:px-10 pt-12 pb-14 rounded-3xl backdrop-blur-sm">
           <div className="bg-white/90 text-black text-xs font-medium px-4 py-1.5 rounded-full inline-block mb-6 animate-fade-in opacity-0">
             Stray-Aid 🐾
           </div>
@@ -70,18 +76,20 @@ const Hero: React.FC<HeroProps> = ({ title, subtitle }) => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in opacity-0 delay-300">
-          <button 
-          className="bg-white text-primary rounded-full px-8 py-3.5 font-medium transition-all hover:shadow-lg hover:shadow-white/20 active:scale-95 group"
-          onClick={() => window.location.href = "http://127.0.0.1:5000/"}
-        >
-          <span className="flex items-center">
-            Report Now
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </span>
-          </button>
-
+            <button 
+              className="bg-white text-primary rounded-full px-8 py-3.5 font-medium transition-all hover:shadow-lg hover:shadow-white/20 active:scale-95 group"
+              onClick={() => window.location.href = "http://127.0.0.1:5000/"}
+            >
+              <span className="flex items-center">
+                Report Now
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </button>
             
-            <button className="bg-transparent border border-white/30 text-white rounded-full px-8 py-3.5 font-medium transition-all hover:bg-white/10 active:scale-95">
+            <button 
+              className="bg-transparent border border-white/30 text-white rounded-full px-8 py-3.5 font-medium transition-all hover:bg-white/10 active:scale-95"
+              onClick={scrollToNext}
+            >
               See How It Works
             </button>
           </div>
@@ -90,12 +98,12 @@ const Hero: React.FC<HeroProps> = ({ title, subtitle }) => {
 
       {/* Scroll Indicator */}
       <div 
-        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer animate-soft-bounce"
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer animate-bounce-slow"
         onClick={scrollToNext}
       >
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center transition-transform hover:translate-y-1">
           <span className="text-white/60 text-sm mb-2">Scroll to explore</span>
-          <ChevronDown className="h-6 w-6 text-white" />
+          <ChevronDown className="h-6 w-6 text-white animate-pulse" />
         </div>
       </div>
     </div>

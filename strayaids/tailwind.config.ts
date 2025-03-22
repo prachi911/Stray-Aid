@@ -114,7 +114,11 @@ export default {
 				'reveal': {
 					'0%': { transform: 'scaleX(0)' },
 					'100%': { transform: 'scaleX(1)' }
-				}
+				},
+				'bounce-slow': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-15px)' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -127,7 +131,8 @@ export default {
 				'scale-in': 'scale-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
 				'soft-bounce': 'soft-bounce 2s ease-in-out infinite',
 				'float': 'float 6s ease-in-out infinite',
-				'reveal': 'reveal 0.7s ease-out forwards'
+				'reveal': 'reveal 0.7s ease-out forwards',
+				'bounce-slow': 'bounce-slow 2s infinite',
 			},
 			transitionDuration: {
 				'2000': '2000ms',
